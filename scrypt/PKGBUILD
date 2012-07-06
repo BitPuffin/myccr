@@ -1,0 +1,43 @@
+# Maintainer: Isak Andersson <BitPuffin@lavabit.com>
+
+pkgname=scrypt
+pkgver=1.1.6
+pkgrel=1
+pkgdesc="Password based encryption utility using the scrypt key derivation function. Far more secure than functions such as PBKDF2 or bcrypt."
+arch=('i686' 'x86_64')
+url="http://www.tarsnap.com/scrypt.html"
+license="BSD"
+source=(http://www.tarsnap.com/scrypt/scrypt-1.1.6.tgz
+	LICENSE)
+md5sums=('a35523cd497f7283635ce881db39c2e2'
+         '3778c79e3b4744f79141527658e953a2')
+
+_dirname="$pkgname-$pkgver"
+_tarball="$_dirname.tgz"
+
+build() {
+  cd "$srcdir"
+  
+  msg "Unpacking tar ball..."
+  tar -xvf $_tarball
+  
+  rm $_tarball
+  
+  msg "Entering source directory..."
+  cd $_dirname
+  
+  msg "Configuring package"
+  ./configure --prefix=/usr
+  
+  msg "Bulding..."
+  make
+}
+
+package() {
+  cd "$srcdir/$_dirname"
+  
+  make DESTDIR="$pkgdir" install
+  
+  install -D -m644 "${srcdir}/LICENSE" \
+  "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
